@@ -4,7 +4,8 @@ Demo implementation of
 > Müller, M., Heidelberger, B., Teschner, M., AND Gross, M.
 > 2005. Meshless Deformations Based on Shape Matching. (SIGGRAPH ’05). SIGGRAPH. https://matthias-research.github.io/pages/publications/MeshlessDeformations_SIG05.pdf
 
-![Sneak Peek Demo App](./doc/demo-bunny.gif)
+![Sneak Peek Bunny Demo App](./doc/demo-bunny.gif)
+![Sneak Peek Cube Demo App](./doc/demo-cube.gif)
 
 ## Dependencies
 
@@ -15,7 +16,7 @@ Demo implementation of
 - [c++11](https://en.cppreference.com/w/)
 - [imgui](https://github.com/ocornut/imgui)
 
-This project uses CMake for build configuration. `libigl` and `imgui` source with glfw integration have been embedded in the repo. `Eigen`, `glad` and `glfw` must be installed by the user and made available to the cmake build system generator by cmake `find_package` calls. Use [vcpkg](https://github.com/microsoft/vcpkg) to easily install these dependencies.
+This project uses CMake for build configuration. `libigl` and `imgui` source with `glfw` integration have been embedded in the repo. `Eigen`, `glad` and `glfw` must be installed by the user and made available to the cmake build system generator by cmake `find_package` calls. Use [vcpkg](https://github.com/microsoft/vcpkg) to easily install these dependencies.
 
 ```
 # if using vcpkg, install dependencies like this (preferably specify x64 target)
@@ -49,3 +50,4 @@ Generate force fields in the `up`, `down`, `left`, `right`, `forward` and `backw
 
 ### Parameter Configuration
 
+Explanations to come.
