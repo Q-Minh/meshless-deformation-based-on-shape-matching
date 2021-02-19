@@ -22,6 +22,8 @@ class deformable_mesh
     Eigen::MatrixXd& V() { return x_; }
     Eigen::MatrixXi& F() { return F_; }
 
+    Eigen::MatrixX3d& forces() { return f_; }
+
     bool load_from_obj(std::string const& filepath);
 
     void apply_gravity() { f_.rowwise() += Eigen::RowVector3d{0.0, -9.8, 0.0}; }

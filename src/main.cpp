@@ -19,6 +19,7 @@ struct pick_t
     bool picked{false};
     mti855::physics::deformable_mesh* object;
     Eigen::Vector3f bc;
+    int mouse_x, mouse_y;
 };
 
 struct simulation_params_t
@@ -26,7 +27,7 @@ struct simulation_params_t
     float Rb              = 0.1f;
     float beta            = 0.8f;
     float Famplitude      = 10.f;
-    float PickAmplifier   = 0.1f;
+    float pick_force      = 10.f;
     float dt              = 0.01f;
     float tau             = 0.8f;
     float perturbation    = 0.1f;
@@ -89,7 +90,7 @@ int main(int argc, char* argv[])
         {
             ImGui::SliderFloat("Velocity Damping", &sim_params.Rb, 0.f, 10.f);
             ImGui::SliderFloat("Force Amplitude", &sim_params.Famplitude, 0.f, 1000.f);
-            ImGui::SliderFloat("Picking Amplifier", &sim_params.PickAmplifier, 0.f, 1.f);
+            ImGui::SliderFloat("Picking Force", &sim_params.pick_force, 1.f, 100.f);
             ImGui::SliderFloat("Tau", &sim_params.tau, 0.f, 1.f);
             ImGui::SliderFloat("Beta", &sim_params.beta, 0.f, 1.f);
             ImGui::SliderFloat("Regularization Perturbation", &sim_params.perturbation, 0.f, 0.1f);
@@ -217,6 +218,9 @@ int main(int argc, char* argv[])
                 pick.k      = fid;
                 pick.object = &object;
                 pick.bc     = bc;
+
+                pick.mouse_x = viewer.current_mouse_x;
+                pick.mouse_y = viewer.current_mouse_y;
 
                 auto const& F = pick.object->F();
                 Eigen::Vector3i const face{F(pick.k, 0), F(pick.k, 1), F(pick.k, 2)};
@@ -355,31 +359,43 @@ int main(int argc, char* argv[])
         if (!object_loaded)
             return false;
 
-        if (!sim_params.pause)
-        {
-            simulate();
-        }
-
         if (pick.picked)
         {
-            Eigen::Vector3d p1{
-                pick.object->V()(pick.vi, 0),
-                pick.object->V()(pick.vi, 1),
-                pick.object->V()(pick.vi, 2)};
+            // Eigen::Vector3d picked_vertex_position{
+            //     pick.object->V()(pick.vi, 0),
+            //     pick.object->V()(pick.vi, 1),
+            //     pick.object->V()(pick.vi, 2)};
+
+            double const x1 = static_cast<double>(pick.mouse_x);
+            double const y1 = viewer.core().viewport(3) - static_cast<double>(pick.mouse_y);
 
             double const x2 = static_cast<double>(viewer.current_mouse_x);
             double const y2 =
                 viewer.core().viewport(3) - static_cast<double>(viewer.current_mouse_y);
 
+            Eigen::Vector3d const p1 = igl::unproject(
+                                           Eigen::Vector3f(x1, y1, .5f),
+                                           viewer.core().view,
+                                           viewer.core().proj,
+                                           viewer.core().viewport)
+                                           .cast<double>();
             Eigen::Vector3d const p2 = igl::unproject(
-                                           Eigen::Vector3f(x2, y2, 1.0f),
+                                           Eigen::Vector3f(x2, y2, .5f),
                                            viewer.core().view,
                                            viewer.core().proj,
                                            viewer.core().viewport)
                                            .cast<double>();
 
-            Eigen::Vector3d d = (p2 - p1).normalized() * sim_params.PickAmplifier;
-            pick.object->V().block(pick.vi, 0, 1, 3) += d.transpose();
+            Eigen::Vector3d d = (p2 - p1).normalized();
+            object.forces().row(pick.vi) += d * static_cast<double>(sim_params.pick_force);
+
+            pick.mouse_x = viewer.current_mouse_x;
+            pick.mouse_y = viewer.current_mouse_y;
+        }
+
+        if (!sim_params.pause)
+        {
+            simulate();
         }
 
         // draw fixed points
