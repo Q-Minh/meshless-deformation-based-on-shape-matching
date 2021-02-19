@@ -9,26 +9,21 @@ Demo implementation of
 
 ## Dependencies
 
-- [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - [libigl](https://libigl.github.io/)
-- [glad](https://glad.dav1d.de/)
-- [glfw](https://www.glfw.org/)
-- [c++11](https://en.cppreference.com/w/)
-- [imgui](https://github.com/ocornut/imgui)
+- [c++17](https://en.cppreference.com/w/)
+- [CMake](https://cmake.org)
 
-This project uses CMake for build configuration. `libigl` and `imgui` source with `glfw` integration have been embedded in the repo. `Eigen`, `glad` and `glfw` must be installed by the user and made available to the cmake build system generator by cmake `find_package` calls. Use [vcpkg](https://github.com/microsoft/vcpkg) to easily install these dependencies.
-
+## Building
 ```
-# if using vcpkg, install dependencies like this (preferably specify x64 target)
-$ <vcpkg path>/vcpkg install eigen glad glfw
+$ git clone https://github.com/Q-Minh/meshless-deformation-based-on-shape-matching
+$ cd meshless-deformation-based-on-shape-matching
+$ cmake -S . -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 
-$ cd <repo path>
-$ mkdir build
-$ cd build
-$ cmake -G "Your CMake Build System Generator" ..
 # if using Visual Studio, you can open your .sln file now
+$ cmake --build build --target App --config Release # or build in VS IDE
 
-$ cmake --build . # or build in VS IDE
+# run app in ./build/Release or ./build
+$ ./build/Release/App.exe # or ./build/App on linux/macos
 ```
 
 ## Usage
