@@ -1,1 +1,4 @@
 build
+*.pdf
+*.zip
+.vscode
